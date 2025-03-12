@@ -4,10 +4,159 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enhanced Audio Visualizer</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/visualizer-styles.css">
+    <link rel="icon" type="image/png" href="assets/icons/favicon.png">
+    <meta name="description" content="Professional-grade audio visualization application with TV backlight integration and cyberpunk aesthetics">
 </head>
 <body>
+    <!-- Main container for the visualizer application -->
     <div id="audio-visualizer-container"></div>
-    <script src="audio-visualizer.js"></script>
+    
+    <!-- Loading screen -->
+    <div id="loading-screen">
+        <div class="loading-logo">
+            <img src="assets/icons/logo.png" alt="Enhanced Audio Visualizer">
+        </div>
+        <div class="loading-progress">
+            <div class="loading-bar">
+                <div class="loading-fill"></div>
+            </div>
+            <div class="loading-status">Initializing...</div>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="js/visualizer-backlight.js"></script>
+    <script src="js/visualizer-core.js"></script>
+    <script>
+        // Wait for DOM content to be loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show loading screen first
+            const loadingScreen = document.getElementById('loading-screen');
+            const loadingFill = document.querySelector('.loading-fill');
+            const loadingStatus = document.querySelector('.loading-status');
+            
+            // Simulate loading progress
+            let progress = 0;
+            const loadingInterval = setInterval(function() {
+                progress += Math.random() * 10;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(loadingInterval);
+                    
+                    // Hide loading screen and initialize application
+                    setTimeout(function() {
+                        loadingScreen.style.opacity = '0';
+                        setTimeout(function() {
+                            loadingScreen.style.display = 'none';
+                            initializeVisualizer();
+                        }, 500);
+                    }, 500);
+                }
+                
+                loadingFill.style.width = progress + '%';
+                
+                // Update loading status
+                if (progress < 30) {
+                    loadingStatus.textContent = 'Loading audio engine...';
+                } else if (progress < 60) {
+                    loadingStatus.textContent = 'Initializing visualization...';
+                } else if (progress < 90) {
+                    loadingStatus.textContent = 'Preparing backlight integration...';
+                } else {
+                    loadingStatus.textContent = 'Almost ready...';
+                }
+            }, 100);
+            
+            // Initialize the visualizer application
+            function initializeVisualizer() {
+                const container = document.getElementById('audio-visualizer-container');
+                
+                // Create visualization application instance
+                const visualizer = new AudioVisualizer(container, {
+                    theme: 'cyberpunk',
+                    accentColor: '#00EEFF',
+                    visualizationMode: 'spectrum',
+                    performanceProfile: 'high'
+                });
+                
+                // Expose to global scope for debugging (remove for production)
+                window.visualizer = visualizer;
+                
+                // Example track for demonstration
+                const demoTrack = {
+                    title: 'Enhanced Visualizer Demo',
+                    artist: 'Audio Technologies',
+                    format: 'FLAC | 96 kHz | 24bit | 4608 kbps',
+                    formatShort: 'FLAC96',
+                    duration: 240 // seconds
+                };
+                
+                // Load example track
+                visualizer.loadTrack(demoTrack);
+                
+                // Auto-start for demo purposes
+                setTimeout(() => {
+                    visualizer.togglePlayback();
+                }, 1000);
+            }
+        });
+    </script>
+    
+    <!-- Additional styles for loading screen -->
+    <style>
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #121212;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s;
+        }
+        
+        .loading-logo {
+            margin-bottom: 40px;
+        }
+        
+        .loading-logo img {
+            width: 200px;
+            height: auto;
+            filter: drop-shadow(0 0 10px #00EEFF);
+            animation: pulse 2s infinite;
+        }
+        
+        .loading-progress {
+            width: 300px;
+        }
+        
+        .loading-bar {
+            height: 4px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        .loading-fill {
+            height: 100%;
+            width: 0%;
+            background-color: #00EEFF;
+            box-shadow: 0 0 10px #00EEFF;
+            transition: width 0.3s;
+        }
+        
+        .loading-status {
+            color: #AAAAAA;
+            font-size: 0.9rem;
+            text-align: center;
+            font-family: 'Share Tech Mono', monospace;
+        }
+    </style>
 </body>
 </html>
